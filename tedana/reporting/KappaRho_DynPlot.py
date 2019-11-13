@@ -40,13 +40,13 @@ state2col = {'accepted': '#00ff00', 'rejected': '#ff0000', 'ignored': '#0000ff'}
 
 # %%
 def load_comp_ts(comp_ts_DIR):
-    meica_mix_Path = osp.join(comp_ts_DIR,'meica_mix.1D')
+    meica_mix_Path = osp.join(comp_ts_DIR, 'meica_mix.1D')
     meica_mix = np.loadtxt(meica_mix_Path)
-    [Nt,Nc]   = meica_mix.shape
+    [Nt, Nc] = meica_mix.shape
     DF = pd.DataFrame(meica_mix)
-    DF.columns = ['C'+str(c).zfill(3) for c in np.arange(Nc)]
+    DF.columns = ['C' + str(c).zfill(3) for c in np.arange(Nc)]
     DF.reset_index(inplace=True)
-    DF.rename(columns={'index':'Volume'}, inplace=True)
+    DF.rename(columns={'index': 'Volume'}, inplace=True)
     CDS = ColumnDataSource(DF)
     return CDS, Nt, Nc
 
@@ -96,9 +96,9 @@ def prepare_comp_table(comp_table_DIR):
         kappa=DF['kappa'],
         rho=DF['rho'],
         varexp=DF['var_exp'],
-        kappa_rank = DF['kappa_rank'],
-        rho_rank = DF['rho_rank'],
-        varexp_rank = DF['var_exp_rank'],
+        kappa_rank=DF['kappa_rank'],
+        rho_rank=DF['rho_rank'],
+        varexp_rank=DF['var_exp_rank'],
         component=[str(i) for i in DF['component']],
         color=DF['color'],
         size=DF['var_exp_size'],
@@ -207,12 +207,14 @@ def create_krPlot(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, CDS_TSplot, CDS_F
     krFig.legend.background_fill_alpha = 0.5
     krFig.legend.orientation = 'horizontal'
     krFig.legend.location = 'bottom_right'
-    krFig.js_on_event(Tap, tap_callback(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, CDS_TSplot, CDS_FFTplot, div))
+    krFig.js_on_event(Tap, tap_callback(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, 
+                                        CDS_TSplot, CDS_FFTplot, div))
     return krFig
 
 
 # %%
-def create_ksortedPlot(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, CDS_TSplot, CDS_FFTplot, Nc, div):
+def create_ksortedPlot(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, 
+                       CDS_TSplot, CDS_FFTplot, Nc, div):
     """
     Create Dymamic Sorted Kappa Plot
 
@@ -239,13 +241,15 @@ def create_ksortedPlot(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, CDS_TSplot, 
     ksorted_Fig.yaxis.axis_label = 'Kappa'
     ksorted_Fig.x_range = Range1d(-1, Nc + 1)
     ksorted_Fig.toolbar.logo = None
-    ksorted_Fig.js_on_event(Tap, tap_callback(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, CDS_TSplot, CDS_FFTplot, div))
+    ksorted_Fig.js_on_event(Tap, tap_callback(CDS_comp_table, CDS_meica_ts, 
+                                              CDS_meica_fft, CDS_TSplot, CDS_FFTplot, div))
 
     return ksorted_Fig
 
 
 # %%
-def create_rho_sortedPlot(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, CDS_TSplot, CDS_FFTplot, Nc, div):
+def create_rho_sortedPlot(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, 
+                          CDS_TSplot, CDS_FFTplot, Nc, div):
     """
     Create Dymamic Sorted Kappa Plot
 
@@ -263,22 +267,24 @@ def create_rho_sortedPlot(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, CDS_TSplo
     """
     # Create Panel for the Ranked Kappa Plot
     hovertool = HoverTool(tooltips=[('Component ID', '@component'), ('Kappa', '@kappa'),
-                                            ('Rho', '@rho'), ('Var. Expl.', '@varexp')])
+                                    ('Rho', '@rho'), ('Var. Expl.', '@varexp')])
     fig = figure(plot_width=400, plot_height=400,
-                         tools=["tap,wheel_zoom,reset,pan,crosshair", hovertool],
-                         title="Components sorted by Rho")
+                 tools=["tap,wheel_zoom,reset,pan,crosshair", hovertool],
+                 title="Components sorted by Rho")
     fig.circle('rho_rank', 'rho', source=CDS_comp_table, size=3, color='color')
     fig.xaxis.axis_label = 'Rho Rank'
     fig.yaxis.axis_label = 'Rho'
     fig.x_range = Range1d(-1, Nc + 1)
     fig.toolbar.logo = None
-    fig.js_on_event(Tap, tap_callback(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, CDS_TSplot, CDS_FFTplot, div))
+    fig.js_on_event(Tap, tap_callback(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, 
+                                      CDS_TSplot, CDS_FFTplot, div))
 
     return fig
 
 
 # %%
-def create_varexp_sortedPlot(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, CDS_TSplot, CDS_FFTplot, Nc, div):
+def create_varexp_sortedPlot(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, 
+                             CDS_TSplot, CDS_FFTplot, Nc, div):
     """
     Create Dymamic Sorted Kappa Plot
 
@@ -296,25 +302,26 @@ def create_varexp_sortedPlot(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, CDS_TS
     """
     # Create Panel for the Ranked Kappa Plot
     hovertool = HoverTool(tooltips=[('Component ID', '@component'), ('Kappa', '@kappa'),
-                                            ('Rho', '@rho'), ('Var. Expl.', '@varexp')])
+                                    ('Rho', '@rho'), ('Var. Expl.', '@varexp')])
     fig = figure(plot_width=400, plot_height=400,
-                         tools=["tap,wheel_zoom,reset,pan,crosshair", hovertool],
-                         title="Components sorted by Variance Explained")
+                 tools=["tap,wheel_zoom,reset,pan,crosshair", hovertool],
+                 title="Components sorted by Variance Explained")
     fig.circle('varexp_rank', 'varexp', source=CDS_comp_table, size=3, color='color')
     fig.xaxis.axis_label = 'Variance Rank'
     fig.yaxis.axis_label = 'Variance'
     fig.x_range = Range1d(-1, Nc + 1)
     fig.toolbar.logo = None
-    fig.js_on_event(Tap, tap_callback(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, CDS_TSplot, CDS_FFTplot, div))
+    fig.js_on_event(Tap, tap_callback(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, 
+                                      CDS_TSplot, CDS_FFTplot, div))
 
     return fig
 
 
 # %%
-def generate_spectrum_CDS(CDS_meica_mix,TR,Nc):
+def generate_spectrum_CDS(CDS_meica_mix, TR, Nc):
     spectrum, freqs = get_spectrum(CDS_meica_mix.data['C000'], TR)
     Nf = spectrum.shape[0]
-    DF = pd.DataFrame(columns=['C'+str(c).zfill(3) for c in np.arange(Nc)],index=np.arange(Nf))
+    DF = pd.DataFrame(columns=['C' + str(c).zfill(3) for c in np.arange(Nc)], index=np.arange(Nf))
     for c in np.arange(Nc):
         cid = 'C' + str(c).zfill(3)
         ts = CDS_meica_mix.data[cid]
@@ -322,33 +329,36 @@ def generate_spectrum_CDS(CDS_meica_mix,TR,Nc):
         DF[cid] = spectrum
     DF['Freq'] = freqs
     CDS = ColumnDataSource(DF)
-    return CDS,Nf
+    return CDS, Nf
 
 
 # %%
 def create_ts_plot(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, CDS_TSplot, CDS_FFTplot, Nt, Nc):
-    fig    = figure(plot_width=800, plot_height=200,
-                         tools=["tap,wheel_zoom,reset,pan,crosshair", HoverTool(tooltips=[('x','@x'),('y','@y')])],
-                         title="Component Time Series")
-    fig.line('x','y',source=CDS_TSplot, line_color='black',line_width=3)
-    fig.xaxis.axis_label='Time [Volume]'
-    fig.yaxis.axis_label='Signal'
+    fig = figure(plot_width=800, plot_height=200,
+                 tools=["tap,wheel_zoom,reset,pan,crosshair", 
+                        HoverTool(tooltips=[('x', '@x'), ('y', '@y')])],
+                 title="Component Time Series")
+    fig.line('x', 'y', source=CDS_TSplot, line_color='black', line_width=3)
+    fig.xaxis.axis_label = 'Time [Volume]'
+    fig.yaxis.axis_label = 'Signal'
     fig.toolbar.logo = None
-    fig.toolbar_location='above'
+    fig.toolbar_location = 'above'
     fig.x_range = Range1d(0, Nt)
     return fig
 
 
 # %%
-def create_fft_plot(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, CDS_TSplot, CDS_FFTplot, Nt, Nc,Nf):
-    fig    = figure(plot_width=800, plot_height=200,
-                         tools=["tap,wheel_zoom,reset,pan,crosshair", HoverTool(tooltips=[('x','@x'),('y','@y')])],
-                         title="Component Spectrum")
-    fig.line('x','y',source=CDS_FFTplot, line_color='black',line_width=3)
-    fig.xaxis.axis_label='Frequency [Hz]'
-    fig.yaxis.axis_label='Power'
+def create_fft_plot(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, CDS_TSplot, 
+                    CDS_FFTplot, Nt, Nc, Nf):
+    fig = figure(plot_width=800, plot_height=200,
+                 tools=["tap,wheel_zoom,reset,pan,crosshair", 
+                        HoverTool(tooltips=[('x', '@x'), ('y', '@y')])],
+                 title="Component Spectrum")
+    fig.line('x', 'y', source=CDS_FFTplot, line_color='black', line_width=3)
+    fig.xaxis.axis_label = 'Frequency [Hz]'
+    fig.yaxis.axis_label = 'Power'
     fig.toolbar.logo = None
-    fig.toolbar_location='above'
+    fig.toolbar_location = 'above'
     fig.x_range = Range1d(0, Nf)
     return fig
 
@@ -360,30 +370,37 @@ def create_fft_plot(CDS_comp_table, CDS_meica_ts, CDS_meica_fft, CDS_TSplot, CDS
 # 1) Load the Comp_table file into a bokeh CDS
 [CDS_CompTable, Nc] = prepare_comp_table(OUTDIR)
 # 2) Load the Component Timeseries into a bokeh CDS
-[CDS_meica_mix,Nt, Nc] = load_comp_ts(OUTDIR)
+[CDS_meica_mix, Nt, Nc] = load_comp_ts(OUTDIR)
 # 3) Generate the Component Spectrum and store it into a bokeh CDS
-[CDS_meica_fft,Nf] = generate_spectrum_CDS(CDS_meica_mix,TR,Nc)
+[CDS_meica_fft, Nf] = generate_spectrum_CDS(CDS_meica_mix, TR, Nc)
 # 4) Generate a Flat Line into a bokeh CDS (this is what get plotted in the TS graph)
-CDS_TSplot = ColumnDataSource(data=dict(x=np.arange(Nt),y=np.zeros(Nt,)))
+CDS_TSplot = ColumnDataSource(data=dict(x=np.arange(Nt), y=np.zeros(Nt,)))
 # 5) Generate a Flat Line into a bokeh CDS (this is what get plotted in the FFT graph)
-CDS_FFTplot = ColumnDataSource(data=dict(x=np.arange(Nt),y=np.zeros(Nt,)))
+CDS_FFTplot = ColumnDataSource(data=dict(x=np.arange(Nt), y=np.zeros(Nt,)))
 # 6) DIV
 div_content = Div(width=600, height=900, height_policy='fixed')
 # -------------------------------------------------------------------------------------
 # 7) Create the Kappa/Rho Scatter Plot
-kappa_rho_plot = create_krPlot(CDS_CompTable, CDS_meica_mix, CDS_meica_fft, CDS_TSplot, CDS_FFTplot, div_content)
+kappa_rho_plot = create_krPlot(CDS_CompTable, CDS_meica_mix, CDS_meica_fft, CDS_TSplot, 
+                               CDS_FFTplot, div_content)
 # 8) Create the Ranked Kappa Plot
-kappa_sorted_plot = create_ksortedPlot(CDS_CompTable, CDS_meica_mix, CDS_meica_fft, CDS_TSplot, CDS_FFTplot, Nc, div_content)
+kappa_sorted_plot = create_ksortedPlot(CDS_CompTable, CDS_meica_mix, CDS_meica_fft, CDS_TSplot, 
+                                       CDS_FFTplot, Nc, div_content)
 # 9) Create the Ranked Rho Plot
-rho_sorted_plot = create_rho_sortedPlot(CDS_CompTable, CDS_meica_mix, CDS_meica_fft, CDS_TSplot, CDS_FFTplot, Nc, div_content)
+rho_sorted_plot = create_rho_sortedPlot(CDS_CompTable, CDS_meica_mix, CDS_meica_fft, CDS_TSplot, 
+                                        CDS_FFTplot, Nc, div_content)
 # 10) Create the Ranked Variance Explained Plot
-varexp_sorted_plot = create_varexp_sortedPlot(CDS_CompTable, CDS_meica_mix, CDS_meica_fft, CDS_TSplot, CDS_FFTplot, Nc, div_content)
+varexp_sorted_plot = create_varexp_sortedPlot(CDS_CompTable, CDS_meica_mix, CDS_meica_fft, 
+                                              CDS_TSplot, CDS_FFTplot, Nc, div_content)
 # 11) Create the Component Timeseries Plot
-ts_plot = create_ts_plot(CDS_CompTable, CDS_meica_mix, CDS_meica_fft, CDS_TSplot, CDS_FFTplot, Nt, Nc)
+ts_plot = create_ts_plot(CDS_CompTable, CDS_meica_mix, CDS_meica_fft, CDS_TSplot, CDS_FFTplot, 
+                         Nt, Nc)
 # 12) Create the Component FFT Plot
-fft_plot = create_fft_plot(CDS_CompTable, CDS_meica_mix, CDS_meica_fft, CDS_TSplot, CDS_FFTplot, Nt, Nc,Nf)
+fft_plot = create_fft_plot(CDS_CompTable, CDS_meica_mix, CDS_meica_fft, CDS_TSplot, CDS_FFTplot, 
+                           Nt, Nc, Nf)
 # 13) Create a layout
-app = column(row(kappa_rho_plot, kappa_sorted_plot, rho_sorted_plot, varexp_sorted_plot), row(ts_plot,fft_plot), div_content)
+app = column(row(kappa_rho_plot, kappa_sorted_plot, rho_sorted_plot, varexp_sorted_plot), 
+             row(ts_plot, fft_plot), div_content)
 # 14) Create Script and Div
 (kr_script, kr_div) = components(app)
 # 15) Embed into Report Template
